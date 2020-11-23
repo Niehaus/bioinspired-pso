@@ -1,57 +1,99 @@
 import math
+import random
 
 
 class PSO:
-    def __init__(self, diversification_factor, cognitive_factor, social_factor):
+    def __init__(self, dimension, diversification_factor, cognitive_factor, social_factor, limits):
         self.w = diversification_factor
         self.c1 = cognitive_factor
         self.c2 = social_factor
         self.topology = {}
-        self.g_best = math.inf
+        self.dimension = dimension
+        self.inf_limit = limits[0]
+        self.sup_limit = limits[1]
+        self.g_best = [self.sup_limit] * dimension
 
-    def set_topology(self, selected_topology):
-        pass
+    def initialize_cloud_particles(self, cloud_size):
+        cloud_of_particles = []
+        for _ in range(cloud_size):
+            cloud_of_particles.append(Particle(self.dimension))
+            cloud_of_particles[-1].initialize_coordinates(self.inf_limit, self.sup_limit)
+        return cloud_of_particles
 
-    def update_velocity(self):
-        pass
+    def set_topology(self, cloud_particles):
+        for i in range(len(cloud_particles)):
+            if i - 1 == -1:
+                vizinhos = [len(cloud_particles) - 1, i + 1]
+            elif i + 1 >= len(cloud_particles):
+                vizinhos = [i - 1, 0]
+            else:
+                vizinhos = [i - 1, i + 1]
+            self.topology[i] = vizinhos
 
-    @staticmethod
-    def check_limits(inf_limit, sup_limit, xi):
-        if xi >= sup_limit:
-            return sup_limit
-        elif xi <= inf_limit:
-            return inf_limit
+        return self.topology
+
+    def best_neighbor(self, cloud_particles, particle):
+        best_fo = math.inf
+        best_neighbor_x = []
+
+        for neighbor in particle.neighbors:
+            if self.f(cloud_particles[neighbor].x) < best_fo:
+                best_fo = self.f(cloud_particles[neighbor].x)
+                best_neighbor_x = cloud_particles[neighbor].x
+        particle.p_best = best_neighbor_x
+
+    def calculate_velocity(self, pi, gj, xij):
+        vij = 1
+        r1 = random.random()
+        r2 = random.random()
+
+        vij += self.w * vij
+        vij += self.c1 * r1 * (pi - xij)
+        vij += self.c2 * r2 * (gj - xij)
+
+        vij = self.check_limits(vij)
+
+        return vij
+
+    def check_limits(self, xi):
+        if xi >= self.sup_limit:
+            return self.sup_limit
+        elif xi <= self.inf_limit:
+            return self.inf_limit
         else:
             return xi
 
-    def f(self, selected_f, x):
+    def f(self, x):
         """
-            10 - Beale Function (2 dimension?)
-            interval = −4.5≤ xi ≤4.5
-            minimum = x∗= (3,0.5), f(x∗) = 0.
-
-            7 - Alpine 2 Function
-            interval = 0≤ xi ≤ 10.
-            minimum =  x∗= (7.917· · ·7.917), f(x∗) = 2.808D ~= 174.617174...
+        7 - Alpine 2 Function
+        interval = 0≤ xi ≤ 10.
+        minimum =  x∗= (7.917· · ·7.917), f(x∗) = 2.808D ~= 174.617174...
         """
-        if selected_f == 10:
-            for i in range(2):
-                x[i] = self.check_limits(-4.5, 4.5, x[i])
-            return (1.5 - x[0] + (x[0] * x[1])) ** 2 + \
-                   (2.25 - x[0] + (x[0] * x[1] ** 2)) ** 2 + \
-                   (2.625 - x[0] + (x[0] * x[1] ** 3)) ** 2
-        elif selected_f == 7:
-            fo = 1
-            for xi in x:
-                xi = self.check_limits(0, 10, xi)
-                fo *= math.sqrt(xi) * math.sin(xi)
-            return fo
+        # fo = 1
+        # for xi in x:
+        #     xi = self.check_limits(xi)
+        #     fo *= math.sqrt(xi) * math.sin(xi)
+        # return fo
+        fo = 0
+        for xi in x:
+            xi = self.check_limits(xi)
+            fo += abs(xi * math.sin(xi) + 0.1 * xi)
+        return fo
 
 
 class Particle:
     def __init__(self, dimension):
-        self.x = [] * dimension  # coordinates
-        self.velocity = [] * dimension
-        self.p_best = [] * dimension  # Best known pos of particle
+        self.dimension = dimension
+        self.x = [0] * dimension  # coordinates
+        self.velocity = [0] * dimension
+        self.p_best = [-math.inf] * dimension  # Best known pos of particle
         self.fitness = 0
-        self.best_neighbor = -1
+        self.neighbors = []
+
+    def initialize_coordinates(self, inf_limit, sup_limit):
+        for i in range(self.dimension):
+            self.x[i] = random.uniform(inf_limit, sup_limit)
+
+    def update_velocity(self):
+        for i in range(self.dimension):
+            self.x[i] = self.x[i] + self.velocity[i]
