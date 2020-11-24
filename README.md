@@ -9,6 +9,15 @@ Algoritmos Bioinspirados
 
 
 <p align="center">
-  <img src="images/scatter-progress.png" alt="scatter_progress"/>
+  <img width="75%" src="images/topology.png" alt="scatter_progress"/>
+</p>
+
+<p align="center">
+  <img width="75%" src="images/scatter-progress.png" alt="scatter_progress"/>
+</p>
+
+
+<p align="center">
+  <img width="75%" src="images/scatter.png" alt="scatter_progress"/>
 </p>
 
