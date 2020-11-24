@@ -6,3 +6,9 @@ Algoritmos Bioinspirados
 
 
 ## Function for Global Optimization
+
+
+<p align="center">
+  <img src="images/scatter-progress.png" alt="scatter_progress"/>
+</p>
+

@@ -1,6 +1,9 @@
 import math
 import random
 
+import matplotlib.pyplot as plt
+import networkx as nx
+
 
 class PSO:
     def __init__(self, dimension, diversification_factor, cognitive_factor, social_factor, limits):
@@ -29,7 +32,7 @@ class PSO:
             else:
                 vizinhos = [i - 1, i + 1]
             self.topology[i] = vizinhos
-
+        # plot_topology(self.topology, len(cloud_particles))
         return self.topology
 
     def best_neighbor(self, cloud_particles, particle):
@@ -42,13 +45,13 @@ class PSO:
                 best_neighbor_x = cloud_particles[neighbor].x
         particle.p_best = best_neighbor_x
 
-    def calculate_velocity(self, pi, gj, xij):
+    def calculate_velocity(self, pij, gj, xij):
         vij = 1
         r1 = random.random()
         r2 = random.random()
 
         vij += self.w * vij
-        vij += self.c1 * r1 * (pi - xij)
+        vij += self.c1 * r1 * (pij - xij)
         vij += self.c2 * r2 * (gj - xij)
 
         vij = self.check_limits(vij)
@@ -69,11 +72,6 @@ class PSO:
         interval = 0≤ xi ≤ 10.
         minimum =  x∗= (7.917· · ·7.917), f(x∗) = 2.808D ~= 174.617174...
         """
-        # fo = 1
-        # for xi in x:
-        #     xi = self.check_limits(xi)
-        #     fo *= math.sqrt(xi) * math.sin(xi)
-        # return fo
         fo = 0
         for xi in x:
             xi = self.check_limits(xi)
@@ -97,3 +95,30 @@ class Particle:
     def update_velocity(self):
         for i in range(self.dimension):
             self.x[i] = self.x[i] + self.velocity[i]
+
+
+def plot_topology(topology, count_nodes):
+    graph_edges = []
+    for i in range(count_nodes):
+        for edge in topology[i]:
+            if tuple([edge, i]) not in graph_edges:
+                graph_edges.append(tuple([i, edge]))
+
+    topology_graph = nx.Graph()
+    topology_graph.add_edges_from(graph_edges)
+
+    options = {
+        'with_labels': True,
+        'font_weight': 'bold',
+        'width': 3
+    }
+    # print(list(topology_graph.edges))
+    nx.draw_spectral(topology_graph, **options)
+    plt.savefig('topology.png')
+    print("Topology Fig Save in: topology.png")
+
+
+def plot_scatter(x, y, label, color):
+    scatter_plot = plt.plot(x, y, 'o', color=color, label=label)
+
+    return scatter_plot
