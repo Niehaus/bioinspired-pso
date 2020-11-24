@@ -7,17 +7,23 @@ Algoritmos Bioinspirados
 
 ## Function for Global Optimization
 
+### Topologia Utilizada
 
 <p align="center">
-  <img width="75%" src="images/topology.png" alt="scatter_progress"/>
+  <img width="35%" src="images/topology.png" alt="scatter_progress"/>
+  topology
 </p>
 
+
+### Progresso das Partículas durante as iterações
+
 <p align="center">
-  <img width="75%" src="images/scatter-progress.png" alt="scatter_progress"/>
+  <img width="50%" src="images/scatter-progress.png" alt="scatter_progress"/>
 </p>
 
+### Nuvem de Partículas antes e depois
 
 <p align="center">
-  <img width="75%" src="images/scatter.png" alt="scatter_progress"/>
+  <img width="50%" src="images/scatter.png" alt="scatter_progress"/>
 </p>
 
