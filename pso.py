@@ -67,11 +67,6 @@ class PSO:
             return xi
 
     def f(self, x):
-        """
-        7 - Alpine 2 Function
-        interval = 0≤ xi ≤ 10.
-        minimum =  x∗= (7.917· · ·7.917), f(x∗) = 2.808D ~= 174.617174...
-        """
         fo = 0
         for xi in x:
             xi = self.check_limits(xi)

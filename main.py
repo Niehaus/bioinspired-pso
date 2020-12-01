@@ -6,16 +6,21 @@ date: 20/11/2020
 """
 
 import matplotlib.pyplot as plt
-
+import csv
+import sys
+import os
 from pso import PSO
 
 if __name__ == '__main__':
-    diversification_factor = 0.729
-    cognitive_factor = 1.49445
-    social_factor = 1.49445
-    dimension = 2
-    cloud_size = 100
-    max_iteration = 5
+    # diversification_factor = 0.729
+    # cognitive_factor = 1.49445
+    # social_factor = 1.49445
+    diversification_factor = float(sys.argv[1])
+    cognitive_factor = float(sys.argv[5])
+    social_factor = float(sys.argv[5])
+    dimension = int(sys.argv[2])
+    cloud_size = int(sys.argv[3])
+    max_iteration = int(sys.argv[4])
     k = 0
     scatter_x = []
     scatter_y = []
@@ -51,13 +56,29 @@ if __name__ == '__main__':
         dict_iter[k] = vector_iter
         vector_iter = []
         k += 1
+    best_fitness = pso.f(pso.g_best)
     print(
         f'f6(x): {pso.inf_limit} <= xi <= {pso.sup_limit}\n'
         f'The global minimum is located at origin x* = (0,. . .,0), f(x*) = 0\n'
         f'Number of particles: {cloud_size}\n'
         f'Dimension(s): {dimension}\n'
-        f'Global Best founded: {pso.f(pso.g_best)}')
+        f'Global Best founded: {best_fitness}')
 
+    file = 'results2.csv'
+    fieldnames = ['dim', 'cloud_size', 'max_iter', 'd_fact', 'c1_c2', 'profit']
+    if os.path.isfile(file):
+        with open(file, 'a', newline='') as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            writer.writerow(
+                {'dim': dimension, 'cloud_size': cloud_size, 'max_iter': max_iteration,
+                 'd_fact': diversification_factor, 'c1_c2': social_factor, 'profit': best_fitness})
+    else:
+        with open(file, 'a+', newline='') as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow(
+                {'dim': dimension, 'cloud_size': cloud_size, 'max_iter': max_iteration,
+                 'd_fact': diversification_factor, 'c1_c2': social_factor, 'profit': best_fitness})
     # color = ['tab:purple', 'tab:green', 'tab:red', 'tab:blue', 'tab:orange']
     # # color = ['indianred','firebrick', 'brown', 'maroon', 'darkred']
     # for item in dict_iter:
